@@ -7,11 +7,11 @@ from urllib import response
 from bs4 import BeautifulSoup
 import requests, openpyxl
 
-
-excel = openpyxl.Workbook()
-sheet = excel.active
-sheet.title = "top rated movies"
-sheet.append('rank: ' , "name: " , "year: " ,"rate: ")
+#create aexcel
+#excel = openpyxl.Workbook()
+#sheet = excel.active
+#sheet.title = "top rated movies"
+#sheet.append(['rank' , "name" , "year" ,"rate"])
 
 
 
@@ -38,13 +38,14 @@ try:
         name = movie.find('td',class_="titleColumn").a.text
         rank = movie.find('td',class_="titleColumn").get_text(strip=True).split('.')[0]
         year = movie.find('td',class_="titleColumn").find('span').text.strip('()')
-        rate = movie.find('td', class_="ratingColumn imdbRating").text
+        rate = movie.find('td', class_="ratingColumn imdbRating").strong.text
         
-        #print('rank: ' ,rank, "name: " ,name, "year: " , year ,"rate: ",rate)
-        sheet.append(rank , name , year ,rate )
+        #add to excel
+        #sheet.append([rank , name , year ,rate ])
 
 
 except Exception as e:
     print(e)
 
-excel.save('IMDB.xlsx')
+#save the excel
+#excel.save('IMDB.xlsx')
