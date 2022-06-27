@@ -2,9 +2,16 @@
 
 #imports
 
+from csv import excel
 from urllib import response
 from bs4 import BeautifulSoup
-import requests
+import requests, openpyxl
+
+
+excel = openpyxl.Workbook()
+sheet = excel.active
+sheet.title = "top rated movies"
+sheet.append('rank: ' , "name: " , "year: " ,"rate: ")
 
 
 
@@ -32,8 +39,12 @@ try:
         rank = movie.find('td',class_="titleColumn").get_text(strip=True).split('.')[0]
         year = movie.find('td',class_="titleColumn").find('span').text.strip('()')
         rate = movie.find('td', class_="ratingColumn imdbRating").text
-        print('rank: ' ,rank, "name: " ,name, "year: " , year ,"rate: ",rate)
+        
+        #print('rank: ' ,rank, "name: " ,name, "year: " , year ,"rate: ",rate)
+        sheet.append(rank , name , year ,rate )
+
 
 except Exception as e:
     print(e)
 
+excel.save('IMDB.xlsx')
