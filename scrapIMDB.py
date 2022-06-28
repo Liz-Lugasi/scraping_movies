@@ -4,6 +4,8 @@
 
 
 from csv import excel
+from pickletools import string1
+import string
 from urllib import response
 from bs4 import BeautifulSoup
 import requests, openpyxl
@@ -56,20 +58,21 @@ def main():
             except Exception as e:
                 popularity = "NotFound"
             
-            genre_links = soup_page.find('div',class_="ipc-chip-list sc-16ede01-4 bMBIRz").find_all('a')
-            genres_list = [(a['href'].split("="))[1].split("&")[0] for a in genre_links]
+            #genre_links = soup_page.find('div',class_="ipc-chip-list sc-16ede01-4 bMBIRz").find_all('a')
+            genre_links = soup_page.find('div',attrs={'data-testid': 'genres'}).find_all('a')
+
+            genres_list = list_to_string([(a['href'].split("="))[1].split("&")[0] for a in genre_links])
             director = soup_page.find('a',class_="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link").text
             
             cast = soup_page.find_all('a',class_="sc-18baf029-1 gJhRzH")
-            cast_list = [actor.text for actor in cast]
+            cast_list = list_to_string([actor.text for actor in cast])
             
             #add to excel
             sheet.append([rank , name , year ,rate, popularity,genres_list ,director, cast_list])
             index += 1
 
     except Exception as e:
-        print(e)
-
+        raise e
     #save the excel
     excel.save('IMDB.xlsx')
         
@@ -102,6 +105,13 @@ def test():
         
         print(name,"")
         index += 1
-        
+
+
+def list_to_string(list_):
+    string = ' ,'.join([str(item) for item in list_])
+    print(string)
+    return string 
+  
 if __name__ == "__main__":
     main()
+    #print(list_to_string(["tut","tot"]))
