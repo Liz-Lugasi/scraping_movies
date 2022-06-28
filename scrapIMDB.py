@@ -28,8 +28,12 @@ def main():
 
         #soup
 
-        soup = BeautifulSoup(html, 'html.parser') #making a soup (,"lxml")
+        soup = BeautifulSoup(html, 'lxml') #making a soup (,"lxml")
         #print(soup.prettify())
+        with open('IMDB 250 TOP MOVIES','wb') as file:
+            file.write(soup.prettify('utf-8'))
+
+
 
         movies = soup.find('tbody', class_="lister-list").find_all('tr')
         #print(movies)
@@ -42,14 +46,19 @@ def main():
             year = movie.find('td',class_="titleColumn").find('span').text.strip('()')
             rate = movie.find('td', class_="ratingColumn imdbRating").strong.text
             
+            #more information on each movie page
             movie_url = urljoin(web_site, movie.find('td',class_="titleColumn").a['href'])
-            esponse_page = requests.get(movie_url) #200
-            html_page = esponse_page.text #or .content
+            response_page = requests.get(movie_url) #200
+            html_page = response_page.text #or .content
             soup_page = BeautifulSoup(html_page, 'html.parser') #making a soup (,"lxml")
             try:
                 popularity = soup_page.find('div',class_="sc-edc76a2-1 gopMqI").text
             except Exception as e:
                 popularity = "NotFound"
+            
+            genre_links = soup_page.find('div',class_="ipc-chip-list sc-16ede01-4 bMBIRz").find_all('a')
+            genres_list = [(a['href'].split("="))[1].split("&")[0] for a in genre_links]
+                        
             #add to excel
             sheet.append([rank , name , year ,rate, popularity ])
             index += 1
@@ -70,6 +79,49 @@ def test():
     except Exception as e:
         popularity = "NotFound"
 
+
+
+
+
+def test2():
+    web_site = "https://www.imdb.com/chart/top/"
+    response = requests.get(web_site) #200
+    html = response.content 
+    #soup
+    soup = BeautifulSoup(html, 'lxml') #making a soup (,"lxml")
+    #print(soup.prettify())
+    with open('IMDB 250 TOP MOVIES','wb') as file:
+        file.write(soup.prettify('utf-8'))
+        
+        
+def test3():        
+        
+    web_site = "https://www.imdb.com/chart/top/"
+    response = requests.get(web_site) #200
+    html = response.content 
+    #soup
+    soup = BeautifulSoup(html, 'lxml') #making a soup (,"lxml")
+    #print(soup.prettify())
+    with open('IMDB 250 TOP MOVIES','wb') as file:
+        file.write(soup.prettify('utf-8'))
+    movies = soup.find('tbody', class_="lister-list").find_all('tr')
+    #print(movies)
+    movies_amount = len(movies)
+    index = 0
+    for movie in movies:
+        print(index,'/',movies_amount)
+        name = movie.find('td',class_="titleColumn").a.text
+        
+        movie_url = urljoin(web_site, movie.find('td',class_="titleColumn").a['href'])
+        esponse_page = requests.get(movie_url) #200
+        html_page = esponse_page.text #or .content
+        soup_page = BeautifulSoup(html_page, 'html.parser') #making a soup (,"lxml")
+
+        genre_all = soup_page.find('div',class_="ipc-chip-list sc-16ede01-4 bMBIRz").find_all('a')
+        genres_list = [(a['href'].split("="))[1].split("&")[0] for a in genre_all]
+        print(name,genres_list)
+        index += 1
+        
 if __name__ == "__main__":
-    main()
-    #test()
+    #main()
+    test3()
