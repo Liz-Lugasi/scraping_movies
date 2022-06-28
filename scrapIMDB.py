@@ -15,7 +15,7 @@ def main():
     excel = openpyxl.Workbook()
     sheet = excel.active
     sheet.title = "top rated movies"
-    sheet.append(['rank' , "name" , "year" ,"rate", "popularity"])
+    sheet.append(['rank' , "name" , "year" ,"rate", "popularity","genres_list" ,"director"])
 
 
     try:
@@ -58,9 +58,10 @@ def main():
             
             genre_links = soup_page.find('div',class_="ipc-chip-list sc-16ede01-4 bMBIRz").find_all('a')
             genres_list = [(a['href'].split("="))[1].split("&")[0] for a in genre_links]
-                        
+            director = soup_page.find('a',class_="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link").text
+            
             #add to excel
-            sheet.append([rank , name , year ,rate, popularity ])
+            sheet.append([rank , name , year ,rate, popularity,genres_list ,director])
             index += 1
 
     except Exception as e:
@@ -117,9 +118,16 @@ def test3():
         html_page = esponse_page.text #or .content
         soup_page = BeautifulSoup(html_page, 'html.parser') #making a soup (,"lxml")
 
-        genre_all = soup_page.find('div',class_="ipc-chip-list sc-16ede01-4 bMBIRz").find_all('a')
-        genres_list = [(a['href'].split("="))[1].split("&")[0] for a in genre_all]
-        print(name,genres_list)
+        #cast = soup_page.find('a',class_="sc-18baf029-1 gJhRzH").text  #work for the first
+            
+        cast = soup_page.find_all('a',class_="sc-18baf029-1 gJhRzH")
+        cast_list = [a.text for a in cast]
+
+        #cast_list = [cast.text for a in cast]
+
+        
+        
+        print(name,cast_list)
         index += 1
         
 if __name__ == "__main__":
