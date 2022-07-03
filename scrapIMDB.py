@@ -6,12 +6,13 @@
 from csv import excel
 from pickletools import string1
 import string
+from tkinter import Y
 from urllib import response
 from bs4 import BeautifulSoup
 import requests, openpyxl
 from urllib.parse import urljoin 
 import pandas as pd
-
+import time as t
 
 
 def main():
@@ -22,6 +23,17 @@ def main():
 
     web_site = "https://www.imdb.com/chart/top/"
     response = requests.get(web_site) #200
+ 
+    if response.status_code == 200 and "503 Service Unavailable" not in str(response.content):
+        print(f'{response.status_code} | Connected!')
+    else:
+        print(f'{response.status_code} - Could not connect...Reconnecting in 15 seconds...')
+        t.sleep(15)
+    print(response.content)    
+    
+    
+    
+    
     html = response.content 
     #soup
     soup = BeautifulSoup(html, 'lxml') #making a soup (,"lxml")
